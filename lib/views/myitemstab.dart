@@ -1,4 +1,5 @@
 import 'package:barterit/models/user.dart';
+import 'package:barterit/views/additemscreen.dart';
 import 'package:flutter/material.dart';
 
 class MyItemsTab extends StatefulWidget {
@@ -13,8 +14,26 @@ class _MyItemsTabState extends State<MyItemsTab> {
   String maintitle = "My Item";
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(maintitle),
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            if (widget.user.id != "na") {
+              await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => AddItemScreen(
+                            user: widget.user,
+                          )));
+              // loadsellerCatches();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("Please login/register an account")));
+            }
+          },
+          child: const Text(
+            "+",
+            style: TextStyle(fontSize: 32),
+          )),
     );
   }
 }

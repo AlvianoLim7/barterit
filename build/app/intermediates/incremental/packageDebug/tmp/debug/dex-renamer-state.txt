@@ -1,4 +1,4 @@
-#Thu Jun 08 10:10:14 SGT 2023
+#Mon Jun 12 11:37:01 SGT 2023
 base.0=C\:\\Users\\ALVIN\\Desktop\\SoCS GLobal\\Sems 6\\Mobile Programming\\barteritgit\\barterit\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

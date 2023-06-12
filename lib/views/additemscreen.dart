@@ -88,11 +88,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.type_specimen),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        Expanded(
+                        Flexible(
+                          flex: 5,
                           child: TextFormField(
                               textInputAction: TextInputAction.next,
                               validator: (val) =>
@@ -105,7 +102,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                               decoration: const InputDecoration(
                                   labelText: 'item Name',
                                   labelStyle: TextStyle(),
-                                  icon: Icon(Icons.abc),
+                                  icon: Icon(Icons.abc_sharp),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(width: 2.0),
                                   ))),
