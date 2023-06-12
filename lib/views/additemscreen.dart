@@ -19,15 +19,15 @@ class AddItemScreen extends StatefulWidget {
 }
 
 class _AddItemScreenState extends State<AddItemScreen> {
-  File? _image;
+  File? _image1;
+  File? _image2;
+  File? _image3;
   var pathAsset = "assets/images/camera.png";
   final _formKey = GlobalKey<FormState>();
   late double screenHeight, screenWidth, cardwitdh;
   final TextEditingController _itemnameEditingController =
       TextEditingController();
   final TextEditingController _itemdescEditingController =
-      TextEditingController();
-  final TextEditingController _itempriceEditingController =
       TextEditingController();
   final TextEditingController _itemqtyEditingController =
       TextEditingController();
@@ -59,7 +59,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             flex: 4,
             child: GestureDetector(
               onTap: () {
-                _selectPic();
+                _selectPic(1);
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
@@ -68,9 +68,53 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       width: screenWidth,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: _image == null
-                              ? AssetImage(pathAsset)
-                              : FileImage(_image!) as ImageProvider,
+                          image: _image1 == null
+                              ? const AssetImage("assets/images/front.png")
+                              : FileImage(_image1!) as ImageProvider,
+                          fit: BoxFit.contain,
+                        ),
+                      )),
+                ),
+              ),
+            )),
+        Flexible(
+            flex: 4,
+            child: GestureDetector(
+              onTap: () {
+                _selectPic(2);
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                child: Card(
+                  child: Container(
+                      width: screenWidth,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: _image2 == null
+                              ? const AssetImage("assets/images/left.png")
+                              : FileImage(_image2!) as ImageProvider,
+                          fit: BoxFit.contain,
+                        ),
+                      )),
+                ),
+              ),
+            )),
+        Flexible(
+            flex: 4,
+            child: GestureDetector(
+              onTap: () {
+                _selectPic(3);
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                child: Card(
+                  child: Container(
+                      width: screenWidth,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: _image3 == null
+                              ? const AssetImage("assets/images/right.png")
+                              : FileImage(_image3!) as ImageProvider,
                           fit: BoxFit.contain,
                         ),
                       )),
@@ -205,34 +249,30 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
-  Future<void> _selectPic() async {
+  Future<void> _selectPic(int imgInd) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
-      maxHeight: 800,
+      maxHeight: 1200,
       maxWidth: 800,
     );
 
     if (pickedFile != null) {
-      _image = File(pickedFile.path);
-      cropImage();
-    } else {
-      print('No image selected.');
-    }
+      File imgFile = File(pickedFile.path);
+      cropImage(imgFile, imgInd);
+    } else {}
   }
 
-  Future<void> cropImage() async {
+  Future<void> cropImage(File imgFile, int imgInd) async {
     CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: _image!.path,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.ratio4x3,
-      ],
+      sourcePath: imgFile.path,
+      aspectRatioPresets: [CropAspectRatioPreset.ratio4x3],
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Cropper',
-            toolbarColor: Colors.blueGrey,
+            toolbarColor: Colors.lightGreen,
             toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.ratio4x3,
+            initAspectRatio: CropAspectRatioPreset.ratio3x2,
             lockAspectRatio: true),
         IOSUiSettings(
           title: 'Cropper',
@@ -240,12 +280,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
       ],
     );
     if (croppedFile != null) {
-      File imageFile = File(croppedFile.path);
-      _image = imageFile;
-      int? sizeInBytes = _image?.lengthSync();
-      double sizeInMb = sizeInBytes! / (1024 * 1024);
-      print(sizeInMb);
-
+      File croppedimgFile = File(croppedFile.path);
+      switch (imgInd) {
+        case 1:
+          _image1 = croppedimgFile;
+          break;
+        case 2:
+          _image2 = croppedimgFile;
+          break;
+        case 3:
+          _image3 = croppedimgFile;
+          break;
+      }
       setState(() {});
     }
   }
@@ -256,7 +302,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
           .showSnackBar(const SnackBar(content: Text("Check your input")));
       return;
     }
-    if (_image == null) {
+    if (_image1 == null || _image2 == null || _image3 == null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Please take picture")));
       return;
@@ -281,7 +327,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 insertitem();
-                //registerUser();
               },
             ),
             TextButton(
@@ -300,27 +345,28 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   void insertitem() {
-    //make the assets folder in htdoc/mynelayan
     String itemname = _itemnameEditingController.text;
     String itemdesc = _itemdescEditingController.text;
-    String itemprice = _itempriceEditingController.text;
     String itemqty = _itemqtyEditingController.text;
     String state = _prstateEditingController.text;
     String locality = _prlocalEditingController.text;
-    String base64Image = base64Encode(_image!.readAsBytesSync());
+    String base64Image1 = base64Encode(_image1!.readAsBytesSync());
+    String base64Image2 = base64Encode(_image2!.readAsBytesSync());
+    String base64Image3 = base64Encode(_image3!.readAsBytesSync());
 
-    http.post(Uri.parse("${MyConfig().SERVER}/mynelayan/php/insert_item.php"),
+    http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/add_item.php"),
         body: {
           "userid": widget.user.id.toString(),
           "itemname": itemname,
           "itemdesc": itemdesc,
-          "itemprice": itemprice,
           "itemqty": itemqty,
           "latitude": prlat,
           "longitude": prlong,
           "state": state,
           "locality": locality,
-          "image": base64Image
+          "image1": base64Image1,
+          "image2": base64Image2,
+          "image3": base64Image3
         }).then((response) {
       print(response.body);
       if (response.statusCode == 200) {
@@ -363,7 +409,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
     _currentPosition = await Geolocator.getCurrentPosition();
 
     _getAddress(_currentPosition);
-    //return await Geolocator.getCurrentPosition();
   }
 
   _getAddress(Position pos) async {
