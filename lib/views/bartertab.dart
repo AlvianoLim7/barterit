@@ -50,10 +50,11 @@ class _BarterTabState extends State<BarterTab> {
         elevation: 5,
         actions: [
           IconButton(
-              onPressed: () {
-                showsearchDialog();
-              },
-              icon: const Icon(Icons.search)),
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showsearchDialog();
+            },
+          )
         ],
       ),
       body: itemList.isEmpty
@@ -201,8 +202,7 @@ class _BarterTabState extends State<BarterTab> {
 
   void searchItems(String search) {
     http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/load_items.php"),
-        body: {"search": search}).then((response) {
-      print(response.body);
+      body: {"search": search}).then((response) {
       itemList.clear();
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
