@@ -20,6 +20,12 @@ class _ProfileTabState extends State<ProfileTab> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(
+        title: Text(maintitle),
+        backgroundColor: Colors.lightGreen,
+        foregroundColor: Colors.white,
+        elevation: 5,
+      ),
       body: Center(
         child: Column(children: [
           Container(

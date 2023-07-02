@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     tabchildren = [
-      const BarterTab(),
+      BarterTab(user: widget.user,),
       MyItemsTab(user: widget.user),
       const ChatsTab(),
       ProfileTab(user: widget.user),
@@ -33,12 +33,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(maintitle),
-        backgroundColor: Colors.lightGreen,
-        foregroundColor: Colors.white,
-        elevation: 5,
-      ),
+      
       body: tabchildren[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped,

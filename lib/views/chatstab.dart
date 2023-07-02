@@ -12,8 +12,13 @@ class _ChatsTabState extends State<ChatsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(maintitle),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(maintitle),
+        backgroundColor: Colors.lightGreen,
+        foregroundColor: Colors.white,
+        elevation: 5,
+      ),
     );
   }
 }

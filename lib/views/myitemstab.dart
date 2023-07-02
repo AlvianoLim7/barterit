@@ -39,6 +39,12 @@ class _MyItemsTabState extends State<MyItemsTab> {
       axiscount = 2;
     }
     return Scaffold(
+      appBar: AppBar(
+        title: Text(maintitle),
+        backgroundColor: Colors.lightGreen,
+        foregroundColor: Colors.white,
+        elevation: 5,
+      ),
       body: itemList.isEmpty
           ? const Center(
               child: Text("No Data"),
@@ -152,7 +158,6 @@ class _MyItemsTabState extends State<MyItemsTab> {
     http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/load_items.php"),
         body: {"user_id": widget.user.id}).then((response) {
       itemList.clear();
-      print(response.body);
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == "success") {
