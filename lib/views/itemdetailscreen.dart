@@ -35,9 +35,10 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.lightGreen,
+        foregroundColor: Colors.white,
         title: Text(
           widget.useritems.itemsName.toString(),
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       body: SingleChildScrollView(
