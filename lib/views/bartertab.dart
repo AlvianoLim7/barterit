@@ -1,5 +1,4 @@
 import 'dart:convert';
-// import 'dart:developer';
 
 import 'package:barterit/models/items.dart';
 import 'package:barterit/models/user.dart';
@@ -25,11 +24,17 @@ class _BarterTabState extends State<BarterTab> {
   List<Items> itemList = <Items>[];
   int numofpage = 1, curpage = 1;
   int numofresult = 0;
+  bool _searchBoolean = false;
+  var color;
 
   TextEditingController searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
+    loadItems(1);
+  }
+
+  Future<void> _refreshItems() async {
     loadItems(1);
   }
 
@@ -44,18 +49,31 @@ class _BarterTabState extends State<BarterTab> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text(maintitle),
+        title: !_searchBoolean ? Text(maintitle) : _searchTextField(),
         backgroundColor: Colors.lightGreen,
         foregroundColor: Colors.white,
         elevation: 5,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              showsearchDialog();
-            },
-          )
-        ],
+        actions: _searchBoolean
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    setState(() {
+                      _searchBoolean = false;
+                    });
+                  },
+                )
+              ]
+            : [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      _searchBoolean = true;
+                    });
+                  },
+                )
+              ],
       ),
       body: itemList.isEmpty
           ? const Center(
@@ -72,64 +90,111 @@ class _BarterTabState extends State<BarterTab> {
                 ),
               ),
               Expanded(
-                  child: GridView.count(
-                      crossAxisCount: axiscount,
-                      children: List.generate(
-                        itemList.length,
-                        (index) {
-                          return Card(
-                              child: InkWell(
-                                  onTap: () async {
-                                    Items useritem = Items.fromJson(
-                                        itemList[index].toJson());
-                                    await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (content) =>
-                                                ItemDetailScreen(
-                                                  user: widget.user,
-                                                  useritems: useritem,
-                                                )));
-                                    loadItems(1);
-                                  },
-                                  child: Column(children: [
-                                    SizedBox(
-                                      height: 120,
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.vertical,
-                                        itemCount: 1,
-                                        itemBuilder: (context, imageIndex) {
-                                          return Column(children: [
-                                            CachedNetworkImage(
-                                              width: screenWidth,
-                                              fit: BoxFit.cover,
-                                              imageUrl:
-                                                  "${MyConfig().SERVER}/barterit/assets/items/front/${itemList[index].itemsId}.png",
-                                              placeholder: (context, url) =>
-                                                  const LinearProgressIndicator(),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Icon(Icons.error),
-                                            ),
-                                          ]);
-                                        },
+                  child: RefreshIndicator(
+                      onRefresh: _refreshItems,
+                      child: GridView.count(
+                          crossAxisCount: axiscount,
+                          children: List.generate(
+                            itemList.length,
+                            (index) {
+                              return Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.black.withOpacity(0.5),
+                                          width: 1.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
                                       ),
-                                    ),
-                                    Text(
-                                      itemList[index].itemsName.toString(),
-                                      style: const TextStyle(fontSize: 20),
-                                    ),
-                                    Text(
-                                      "${itemList[index].itemsQty} items",
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                    Text(
-                                      "At ${itemList[index].itemsState} ",
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ])));
+                                      child: Card(
+                                          child: InkWell(
+                                              onTap: () async {
+                                                Items useritem = Items.fromJson(
+                                                    itemList[index].toJson());
+                                                await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (content) =>
+                                                            ItemDetailScreen(
+                                                              user: widget.user,
+                                                              useritems:
+                                                                  useritem,
+                                                            )));
+                                                loadItems(1);
+                                              },
+                                              child: Column(children: [
+                                                SizedBox(
+                                                  height: 120,
+                                                  child: ListView.builder(
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    itemCount: 1,
+                                                    itemBuilder:
+                                                        (context, imageIndex) {
+                                                      return Column(children: [
+                                                        CachedNetworkImage(
+                                                          width: screenWidth,
+                                                          fit: BoxFit.cover,
+                                                          imageUrl:
+                                                              "${MyConfig().SERVER}/barterit/assets/items/front/${itemList[index].itemsId}.png",
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              const LinearProgressIndicator(),
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              const Icon(
+                                                                  Icons.error),
+                                                        ),
+                                                      ]);
+                                                    },
+                                                  ),
+                                                ),
+                                                Text(
+                                                  itemList[index]
+                                                      .itemsName
+                                                      .toString(),
+                                                  style: const TextStyle(
+                                                      fontSize: 20),
+                                                ),
+                                                Text(
+                                                  "${itemList[index].itemsQty} items",
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                                Text(
+                                                  "At ${itemList[index].itemsState} ",
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                              ])))));
+                            },
+                          )))),
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: numofpage,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    if ((curpage - 1) == index) {
+                      color = Colors.lightGreen;
+                    } else {
+                      color = Colors.grey;
+                    }
+                    return TextButton(
+                        onPressed: () {
+                          curpage = index + 1;
+                          loadItems(index + 1);
                         },
-                      )))
+                        child: Text(
+                          (index + 1).toString(),
+                          style: TextStyle(color: color, fontSize: 18),
+                        ));
+                  },
+                ),
+              ),
             ]),
     );
   }
@@ -153,56 +218,33 @@ class _BarterTabState extends State<BarterTab> {
     });
   }
 
-  void showsearchDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          title: const Text(
-            "Search?",
-            style: TextStyle(),
-          ),
-          content: Column(mainAxisSize: MainAxisSize.min, children: [
-            TextField(
-                controller: searchController,
-                decoration: const InputDecoration(
-                    labelText: 'Search',
-                    labelStyle: TextStyle(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 2.0),
-                    ))),
-            const SizedBox(
-              height: 4,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  String search = searchController.text;
-                  searchItems(search);
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Search"))
-          ]),
-          actions: <Widget>[
-            TextButton(
-              child: const Text(
-                "Close",
-                style: TextStyle(),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+  Widget _searchTextField() {
+    return TextField(
+      autofocus: true,
+      cursorColor: Colors.white,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+      ),
+      textInputAction: TextInputAction.search,
+      onSubmitted: (search) => searchItems(search),
+      decoration: const InputDecoration(
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        hintText: 'Search',
+        hintStyle: TextStyle(
+          color: Colors.white60,
+          fontSize: 20,
+        ),
+      ),
     );
   }
 
   void searchItems(String search) {
     http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/load_items.php"),
-      body: {"search": search}).then((response) {
+        body: {"search": search}).then((response) {
       itemList.clear();
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);

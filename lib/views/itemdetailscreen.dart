@@ -34,143 +34,104 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("Item Details")),
-      body: Column(
+      appBar: AppBar(
+        title: Text(
+          widget.useritems.itemsName.toString(),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: screenWidth * 0.6,
+                child: PageView(
+                  children: [
+                    buildImageCard(
+                      imageUrl:
+                          "${MyConfig().SERVER}/barterit/assets/items/front/${widget.useritems.itemsId}.png",
+                    ),
+                    buildImageCard(
+                      imageUrl:
+                          "${MyConfig().SERVER}/barterit/assets/items/right/${widget.useritems.itemsId}.png",
+                    ),
+                    buildImageCard(
+                      imageUrl:
+                          "${MyConfig().SERVER}/barterit/assets/items/left/${widget.useritems.itemsId}.png",
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+            ),
+            buildTable(),
+            const SizedBox(height: 8.0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildImageCard({required String imageUrl}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Card(
+        child: CachedNetworkImage(
+          width: screenWidth,
+          fit: BoxFit.cover,
+          imageUrl: imageUrl,
+          placeholder: (context, url) => const LinearProgressIndicator(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      ),
+    );
+  }
+
+  Widget buildTable() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Table(
+        columnWidths: const {
+          0: FlexColumnWidth(4),
+          1: FlexColumnWidth(6),
+        },
         children: [
-          Padding(
-            padding:
-                const EdgeInsets.all(8.0), // Padding before the image section
-            child: SizedBox(
-              height: screenWidth * 0.6, // Adjust the height as needed
-              child: PageView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Card(
-                      child: CachedNetworkImage(
-                        width: screenWidth,
-                        fit: BoxFit.cover,
-                        imageUrl:
-                            "${MyConfig().SERVER}/barterit/assets/items/front/${widget.useritems.itemsId}.png",
-                        placeholder: (context, url) =>
-                            const LinearProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Card(
-                      child: CachedNetworkImage(
-                        width: screenWidth,
-                        fit: BoxFit.cover,
-                        imageUrl:
-                            "${MyConfig().SERVER}/barterit/assets/items/right/${widget.useritems.itemsId}.png",
-                        placeholder: (context, url) =>
-                            const LinearProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Card(
-                      child: CachedNetworkImage(
-                        width: screenWidth,
-                        fit: BoxFit.cover,
-                        imageUrl:
-                            "${MyConfig().SERVER}/barterit/assets/items/left/${widget.useritems.itemsId}.png",
-                        placeholder: (context, url) =>
-                            const LinearProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          buildTableRow("Description", widget.useritems.itemsDesc.toString()),
+          buildTableRow(
+              "Quantity Available", widget.useritems.itemsQty.toString()),
+          buildTableRow(
+            "Location",
+            "${widget.useritems.itemsLocality}/${widget.useritems.itemsState}",
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              widget.useritems.itemsName.toString(),
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(4),
-                  1: FlexColumnWidth(6),
-                },
-                children: [
-                  TableRow(children: [
-                    const TableCell(
-                      child: Text(
-                        "Description",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TableCell(
-                      child: Text(
-                        widget.useritems.itemsDesc.toString(),
-                      ),
-                    ),
-                  ]),
-                  TableRow(children: [
-                    const TableCell(
-                      child: Text(
-                        "Quantity Available",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TableCell(
-                      child: Text(
-                        widget.useritems.itemsQty.toString(),
-                      ),
-                    ),
-                  ]),
-                  TableRow(children: [
-                    const TableCell(
-                      child: Text(
-                        "Location",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TableCell(
-                      child: Text(
-                        "${widget.useritems.itemsLocality}/${widget.useritems.itemsState}",
-                      ),
-                    ),
-                  ]),
-                  TableRow(children: [
-                    const TableCell(
-                      child: Text(
-                        "Date",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    TableCell(
-                      child: Text(
-                        df.format(DateTime.parse(
-                            widget.useritems.itemsDate.toString())),
-                      ),
-                    ),
-                  ]),
-                ],
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(8.0), // Padding after the image section
+          buildTableRow(
+            "Date",
+            df.format(DateTime.parse(widget.useritems.itemsDate.toString())),
           ),
         ],
       ),
+    );
+  }
+
+  TableRow buildTableRow(String title, String value) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(value),
+        ),
+      ],
     );
   }
 }

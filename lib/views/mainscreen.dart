@@ -33,7 +33,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: tabchildren[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped,

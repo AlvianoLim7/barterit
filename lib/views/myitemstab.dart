@@ -65,65 +65,78 @@ class _MyItemsTabState extends State<MyItemsTab> {
                       children: List.generate(
                         itemList.length,
                         (index) {
-                          return Card(
-                              child: InkWell(
-                                  child: Column(children: [
-                            SizedBox(
-                              height: 120,
-                              child: ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                itemCount: 1,
-                                itemBuilder: (context, imageIndex) {
-                                  return Column(children: [
-                                    CachedNetworkImage(
-                                      width: screenWidth,
-                                      fit: BoxFit.cover,
-                                      imageUrl:
-                                          "${MyConfig().SERVER}/barterit/assets/items/front/${itemList[index].itemsId}.png",
-                                      placeholder: (context, url) =>
-                                          const LinearProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                          return Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.black.withOpacity(0.5),
+                                      width: 1.0,
                                     ),
-                                    const SizedBox(height: 10),
-                                    CachedNetworkImage(
-                                      width: screenWidth,
-                                      fit: BoxFit.cover,
-                                      imageUrl:
-                                          "${MyConfig().SERVER}/barterit/assets/items/left/${itemList[index].itemsId}.png",
-                                      placeholder: (context, url) =>
-                                          const LinearProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Card(
+                                      child: InkWell(
+                                          child: Column(children: [
+                                    SizedBox(
+                                      height: 120,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        itemCount: 1,
+                                        itemBuilder: (context, imageIndex) {
+                                          return Column(children: [
+                                            CachedNetworkImage(
+                                              width: screenWidth,
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                                  "${MyConfig().SERVER}/barterit/assets/items/front/${itemList[index].itemsId}.png",
+                                              placeholder: (context, url) =>
+                                                  const LinearProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            CachedNetworkImage(
+                                              width: screenWidth,
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                                  "${MyConfig().SERVER}/barterit/assets/items/left/${itemList[index].itemsId}.png",
+                                              placeholder: (context, url) =>
+                                                  const LinearProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            CachedNetworkImage(
+                                              width: screenWidth,
+                                              fit: BoxFit.cover,
+                                              imageUrl:
+                                                  "${MyConfig().SERVER}/barterit/assets/items/right/${itemList[index].itemsId}.png",
+                                              placeholder: (context, url) =>
+                                                  const LinearProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                          ]);
+                                        },
+                                      ),
                                     ),
-                                    const SizedBox(height: 10),
-                                    CachedNetworkImage(
-                                      width: screenWidth,
-                                      fit: BoxFit.cover,
-                                      imageUrl:
-                                          "${MyConfig().SERVER}/barterit/assets/items/right/${itemList[index].itemsId}.png",
-                                      placeholder: (context, url) =>
-                                          const LinearProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                                    Text(
+                                      itemList[index].itemsName.toString(),
+                                      style: const TextStyle(fontSize: 20),
                                     ),
-                                  ]);
-                                },
-                              ),
-                            ),
-                            Text(
-                              itemList[index].itemsName.toString(),
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              "${itemList[index].itemsQty} items",
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                            Text(
-                              "At ${itemList[index].itemsState} ",
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ])));
+                                    Text(
+                                      "${itemList[index].itemsQty} items",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    Text(
+                                      "At ${itemList[index].itemsState} ",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ])))));
                         },
                       )))
             ]),

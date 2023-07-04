@@ -203,9 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (content) =>  MainScreen(
-                        user: user
-                        )));
+                    builder: (content) => MainScreen(user: user)));
           } else {
             ScaffoldMessenger.of(context)
                 .showSnackBar(const SnackBar(content: Text("Login Failed")));
@@ -223,8 +221,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _forgotDialog() {}
 
   void _goToRegister() {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (content) => const RegisterScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (content) => const RegisterScreen()));
   }
 
   void saveremovepref(bool value) async {
