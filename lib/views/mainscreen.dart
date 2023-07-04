@@ -25,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
     tabchildren = [
       BarterTab(user: widget.user,),
       MyItemsTab(user: widget.user),
-      const ChatsTab(),
+      ChatsTab(user: widget.user),
       ProfileTab(user: widget.user),
     ];
   }

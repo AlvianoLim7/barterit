@@ -1,7 +1,9 @@
+import 'package:barterit/models/user.dart';
 import 'package:flutter/material.dart';
 
 class ChatsTab extends StatefulWidget {
-  const ChatsTab({super.key});
+  final User user;
+  const ChatsTab({super.key, required this.user});
 
   @override
   State<ChatsTab> createState() => _ChatsTabState();

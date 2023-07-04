@@ -4,6 +4,7 @@ import 'package:barterit/models/user.dart';
 import 'package:barterit/views/loginscreen.dart';
 import 'package:barterit/views/registerscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileTab extends StatefulWidget {
   final User user;
@@ -84,7 +85,7 @@ class _ProfileTabState extends State<ProfileTab> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
+                            builder: (context) => LoginScreen(user: widget.user)),
                       );
                     },
                     color: Colors.lightGreen,
@@ -146,17 +147,14 @@ class _ProfileTabState extends State<ProfileTab> {
     );
   }
 
-  void LogoutUser() {
-    user = User(
-        id: "na",
-        name: "na",
-        email: "na",
-        datareg: "na",
-        password: "na",
-        otp: "na");
+  void LogoutUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (context) => LoginScreen(user: widget.user)),
     );
   }
 }

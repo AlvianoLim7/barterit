@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final User user;
+  const LoginScreen({super.key, required this.user});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -40,6 +41,27 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.lightGreen,
         foregroundColor: Colors.white,
         elevation: 5,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainScreen(
+                  user: User(
+                    id: "na",
+                    name: "na",
+                    email: "na",
+                    datareg: "na",
+                    password: "na",
+                    otp: "na",
+                  ),
+                ),
+              ),
+              (route) => false,
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
           child: Column(
@@ -200,22 +222,20 @@ class _LoginScreenState extends State<LoginScreen> {
             User user = User.fromJson(jsondata['data']);
             ScaffoldMessenger.of(context)
                 .showSnackBar(const SnackBar(content: Text("Login Success")));
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (content) => MainScreen(user: user)));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MainScreen(user: user),
+              ),
+              (route) => false,
+            );
           } else {
             ScaffoldMessenger.of(context)
                 .showSnackBar(const SnackBar(content: Text("Login Failed")));
           }
         }
-      }).timeout(const Duration(seconds: 5), onTimeout: () {
-        // Time has run out, do what you wanted to do.
-      });
-    } on TimeoutException catch (_) {
-      // ignore: avoid_print
-      print("Time out");
-    }
+      }).timeout(const Duration(seconds: 5), onTimeout: () {});
+    } on TimeoutException catch (_) {}
   }
 
   void _forgotDialog() {}
