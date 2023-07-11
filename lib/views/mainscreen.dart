@@ -1,8 +1,8 @@
 import 'package:barterit/models/user.dart';
-import 'package:barterit/views/myitemstab.dart';
-import 'package:barterit/views/bartertab.dart';
+import 'package:barterit/views/seller/myitemstab.dart';
+import 'package:barterit/views/barter/bartertab.dart';
 import 'package:barterit/views/chatstab.dart';
-import 'package:barterit/views/profiletab.dart';
+import 'package:barterit/views/profile/profiletab.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {

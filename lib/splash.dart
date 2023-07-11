@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:barterit/models/user.dart';
 import 'package:barterit/myconfig.dart';
+import 'package:barterit/views/profile/loginscreen.dart';
 import 'package:barterit/views/mainscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +21,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     checkAndLogin();
-
   }
 
   @override
@@ -82,20 +82,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (content) => MainScreen(user: user))));
-          } else {
-            user = User(
-                id: "na",
-                name: "na",
-                email: "na",
-                datareg: "na",
-                password: "na",
-                otp: "na");
-            Timer(
-                const Duration(seconds: 3),
-                () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (content) => MainScreen(user: user))));
           }
         }).timeout(const Duration(seconds: 5), onTimeout: () {
           // Time has run out, do what you wanted to do.
@@ -105,17 +91,10 @@ class _SplashScreenState extends State<SplashScreen> {
         print("Time out");
       }
     } else {
-      user = User(
-          id: "na",
-          name: "na",
-          email: "na",
-          datareg: "na",
-          password: "na",
-          otp: "na");
       Timer(
           const Duration(seconds: 3),
           () => Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (content) => MainScreen(user: user))));
+              MaterialPageRoute(builder: (content) => const LoginScreen())));
     }
   }
 }
