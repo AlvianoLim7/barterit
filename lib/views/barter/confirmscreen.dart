@@ -130,7 +130,6 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
           "seller_item_id": widget.selecteditems.itemsId,
         }).then((response) {
       if (response.statusCode == 200) {
-        print(response.body);
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
           ScaffoldMessenger.of(context)

@@ -177,17 +177,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   String? validatePassword(String value) {
-    String pattern = r'^(?=.*?[A‐Z])(?=.*?[a‐z])(?=.*?[0‐9]).{6,}$';
+    String pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$';
     RegExp regex = RegExp(pattern);
-    if (value.isEmpty || (value.length < 8)) {
+    if (value.isEmpty || value.length < 8) {
       return 'Please enter a password with at least 8 characters';
-    } else {
-      if (!regex.hasMatch(value)) {
-        return null;
-      } else {
-        return 'Contain at least A-Z, a-z, 0-9, 1 Special Character';
-      }
+    } else if (!regex.hasMatch(value)) {
+      return 'Contain at least A-Z, a-z, 0-9';
     }
+    return null;
   }
 
   void regisDialog() {
@@ -258,11 +255,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Registration Failed1")));
+              const SnackBar(content: Text("Registration Failed")));
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Registration Failed2")));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Registration Failed")));
       }
     });
   }

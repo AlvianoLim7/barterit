@@ -18,7 +18,7 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   String maintitle = "Order List";
   late double screenHeight, screenWidth;
-  List<Orders> orderList = <Orders>[];
+  List<Order> orderList = <Order>[];
 
   @override
   void initState() {
@@ -149,7 +149,7 @@ class _OrderScreenState extends State<OrderScreen> {
         if (jsondata['status'] == "success") {
           var extractdata = jsondata['data'];
           extractdata['order'].forEach((v) async {
-            Orders order = Orders.fromJson(v);
+            Order order = Order.fromJson(v);
             orderList.add(order);
           });
         }
@@ -158,40 +158,42 @@ class _OrderScreenState extends State<OrderScreen> {
     });
   }
 
-  void confirmBarter(Orders order) {
+  void confirmBarter(Order order) {
     order.orderStatus = 'confirmed';
     sendOrderStatus(order);
   }
 
-  void rejectBarter(Orders order) {
+  void rejectBarter(Order order) {
     order.orderStatus = 'rejected';
     sendOrderStatus(order);
   }
 
-  void sendOrderStatus(Orders order) {
+  void sendOrderStatus(Order order) {
     http.post(
       Uri.parse("${MyConfig().SERVER}/barterit/php/update_order.php"),
       body: {
         'order_id': order.orderId.toString(),
         'new_status': order.orderStatus.toString(),
-        'buyer_id': order.buyerId.toString(),
-        'seller_id': order.sellerId.toString()
+        'buyer_item_id': order.buyerItemId.toString(),
+        'seller_item_id': order.sellerItemId.toString(),
       },
     ).then((response) {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData['status'] == 'success') {
-          print(response.body);
           setState(() {});
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Order status updated")));
+            const SnackBar(content: Text("Order status updated")),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Failed to update order status")));
+            const SnackBar(content: Text("Failed to update order status")),
+          );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to update order status")));
+          const SnackBar(content: Text("Failed to update order status")),
+        );
       }
     });
   }

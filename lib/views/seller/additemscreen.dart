@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:barterit/views/profile/buycoinscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:barterit/models/user.dart';
@@ -41,6 +42,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   String curstate = "";
   String prlat = "";
   String prlong = "";
+  String maintitle = "Add Item";
 
   @override
   void initState() {
@@ -53,7 +55,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("Add New Item")),
+      appBar: AppBar(
+        backgroundColor: Colors.lightGreen,
+        foregroundColor: Colors.white,
+        title: Text(maintitle),
+      ),
       body: Column(children: [
         Flexible(
             flex: 4,
@@ -372,19 +378,92 @@ class _AddItemScreenState extends State<AddItemScreen> {
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Insert Success")));
+          // Deduct coin and navigate to the previous screen
+          deductCoin().then((deductResult) {
+            if (deductResult) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Insert Success")));
+              Navigator.pop(context);
+            } else {
+              showInsufficientCoinDialog();
+            }
+          });
         } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text("Insert Failed")));
         }
-        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text("Insert Failed")));
-        Navigator.pop(context);
       }
     });
+  }
+
+  Future<bool> deductCoin() async {
+    int currentCoin = int.parse(widget.user.coin!);
+    int itemCost = 10;
+
+    if (currentCoin >= itemCost) {
+      final response = await http.post(
+        Uri.parse("${MyConfig().SERVER}/barterit/php/update_coin.php"),
+        body: {
+          "user_id": widget.user.id.toString(),
+          "coins": itemCost.toString(),
+          "status": "pay"
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        return jsondata['status'] == 'success';
+      }
+    }
+    return false;
+  }
+
+  void showInsufficientCoinDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          title: const Text(
+            "Insufficient Coins",
+            style: TextStyle(),
+          ),
+          content: const Text(
+            "You don't have enough coins. Do you want to buy more coins?",
+            style: TextStyle(),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Yes",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BuyCoinScreen(user: widget.user)),
+                  (route) => false,
+                );
+              },
+            ),
+            TextButton(
+              child: const Text(
+                "No",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _determinePosition() async {

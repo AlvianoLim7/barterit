@@ -1,9 +1,16 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors
+import 'dart:convert';
 
 import 'package:barterit/models/user.dart';
+import 'package:barterit/myconfig.dart';
+import 'package:barterit/views/profile/buycoinscreen.dart';
 import 'package:barterit/views/profile/loginscreen.dart';
+import 'package:barterit/views/profile/profilesetting.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileTab extends StatefulWidget {
   final User user;
@@ -17,13 +24,19 @@ class _ProfileTabState extends State<ProfileTab> {
   String maintitle = "Profile";
   late double screenHeight, screenWidth, cardwitdh;
   late User user;
+  final df = DateFormat('dd-MM-yyyy');
 
-  final TextEditingController _nameEditingController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(maintitle),
@@ -32,74 +45,147 @@ class _ProfileTabState extends State<ProfileTab> {
         elevation: 5,
         actions: [
           IconButton(
-              onPressed: () {
-                LogoutUser();
-              },
-              icon: const Icon(Icons.logout))
+            onPressed: () {
+              LogoutUser();
+            },
+            icon: const Icon(Icons.logout),
+          ),
         ],
       ),
-      body: Center(
-        child: Column(children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            height: screenHeight * 0.25,
-            width: screenWidth,
-            child: Card(
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(
-                  margin: const EdgeInsets.all(4),
-                  width: screenWidth * 0.4,
-                  child: Image.asset(
-                    "assets/images/profile.png",
-                  ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: screenWidth * 0.6,
+                child: PageView(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(4),
+                      width: screenWidth * 0.4,
+                      child: Image.asset(
+                        "assets/images/profile.png",
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                    flex: 6,
-                    child: Column(
-                      children: [
-                        Text(
-                          widget.user.name.toString(),
-                          style: const TextStyle(fontSize: 24),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+            ),
+            buildTable(),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (content) => ProfileSetting(
+                          user: widget.user,
                         ),
-                        Text("Email: ${widget.user.email}"),
-                        Text("Data:  ${widget.user.datareg}"),
-                        Text("Coin: ${widget.user.coin}"),
-                      ],
-                    )),
-              ]),
+                      ),
+                    );
+                  },
+                  child: Text('Setting', style: TextStyle(color: Colors.white)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (content) => BuyCoinScreen(user: widget.user),
+                      ),
+                    );
+                  },
+                  child:
+                      Text('Buy Coins', style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ),
-          ),
-          Container(
-            width: screenWidth,
-            alignment: Alignment.center,
-            color: Theme.of(context).colorScheme.background,
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(0, 2, 0, 2),
-              child: Text("Profile Setting",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  )),
-            ),
-          ),
-          const SizedBox(width: 20.0),
-          TextFormField(
-            controller: _nameEditingController,
-            //validate name
-            validator: (val) => val!.isEmpty || (val.length < 3)
-                ? "name must be longer than 3"
-                : null,
-            decoration: InputDecoration(
-                labelText: widget.user.name,
-                labelStyle: const TextStyle(),
-                icon: const Icon(Icons.person),
-                focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(width: 2.0))),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget buildTable() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Table(
+        columnWidths: const {
+          0: FlexColumnWidth(4),
+          1: FlexColumnWidth(6),
+        },
+        children: [
+          buildTableRow("Name", widget.user.name.toString()),
+          buildTableRow("Email", widget.user.email.toString()),
+          buildTableRow(
+            "Date",
+            df.format(DateTime.parse(widget.user.datareg.toString())),
+          ),
+          buildTableRow("Coin", widget.user.coin.toString()),
+        ],
+      ),
+    );
+  }
+
+  TableRow buildTableRow(String title, String value) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(value),
+        ),
+      ],
+    );
+  }
+
+  Widget buildImageCard({required String imageUrl}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Card(
+        child: CachedNetworkImage(
+          width: screenWidth,
+          fit: BoxFit.cover,
+          imageUrl: imageUrl,
+          placeholder: (context, url) => const LinearProgressIndicator(),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      ),
+    );
+  }
+
+  void loadData() {
+    http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/load_user.php"),
+        body: {"email": widget.user.email}).then((response) {
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata != null && jsondata['status'] == "success") {
+          var userData = jsondata['data'];
+          if (userData != null) {
+            setState(() {
+              widget.user.name = userData['name'];
+              widget.user.email = userData['email'];
+              widget.user.datareg = userData['datareg'];
+              widget.user.coin = userData['coin'];
+            });
+          }
+        }
+      }
+    });
   }
 
   void LogoutUser() async {

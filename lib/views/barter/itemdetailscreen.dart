@@ -73,11 +73,15 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
             ),
             buildTable(),
             const SizedBox(height: 8.0),
-            ElevatedButton(
+            Center(
+              child: ElevatedButton(
                 onPressed: () {
                   itemCheck();
                 },
-                child: const Text("Barter"))
+                child:
+                    const Text("Barter", style: TextStyle(color: Colors.white)),
+              ),
+            )
           ],
         ),
       ),
@@ -147,7 +151,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   void itemCheck() {
     if (widget.selecteditems.userId == widget.user.id) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Cant Barter with your own item")));
+          const SnackBar(content: Text("Can't Barter with your own item")));
     } else {
       Navigator.push(
         context,
