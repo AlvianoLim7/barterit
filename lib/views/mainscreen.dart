@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:barterit/models/user.dart';
+import 'package:barterit/myconfig.dart';
 import 'package:barterit/views/seller/myitemstab.dart';
 import 'package:barterit/views/barter/bartertab.dart';
 import 'package:barterit/views/chatstab.dart';
 import 'package:barterit/views/profile/profiletab.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class MainScreen extends StatefulWidget {
   final User user;
@@ -23,11 +27,14 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     tabchildren = [
-      BarterTab(user: widget.user,),
+      BarterTab(
+        user: widget.user,
+      ),
       MyItemsTab(user: widget.user),
       ChatsTab(user: widget.user),
       ProfileTab(user: widget.user),
     ];
+    loadData();
   }
 
   @override
@@ -78,6 +85,26 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (_currentIndex == 3) {
         maintitle = "Profile";
+      }
+    });
+  }
+
+  void loadData() {
+    http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/load_user.php"),
+        body: {"email": widget.user.email}).then((response) {
+      if (response.statusCode == 200) {
+        var jsondata = jsonDecode(response.body);
+        if (jsondata != null && jsondata['status'] == "success") {
+          var userData = jsondata['data'];
+          if (userData != null) {
+            setState(() {
+              widget.user.name = userData['name'];
+              widget.user.email = userData['email'];
+              widget.user.datareg = userData['datareg'];
+              widget.user.coin = userData['coin'];
+            });
+          }
+        }
       }
     });
   }

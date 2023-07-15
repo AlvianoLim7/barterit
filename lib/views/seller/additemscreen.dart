@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:barterit/views/profile/buycoinscreen.dart';
@@ -332,7 +334,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                insertitem();
+                deductCoin();
               },
             ),
             TextButton(
@@ -378,16 +380,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
-          // Deduct coin and navigate to the previous screen
-          deductCoin().then((deductResult) {
-            if (deductResult) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Insert Success")));
-              Navigator.pop(context);
-            } else {
-              showInsufficientCoinDialog();
-            }
-          });
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Insert Success")));
+          Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text("Insert Failed")));
@@ -399,26 +394,32 @@ class _AddItemScreenState extends State<AddItemScreen> {
     });
   }
 
-  Future<bool> deductCoin() async {
-    int currentCoin = int.parse(widget.user.coin!);
-    int itemCost = 10;
-
-    if (currentCoin >= itemCost) {
-      final response = await http.post(
-        Uri.parse("${MyConfig().SERVER}/barterit/php/update_coin.php"),
-        body: {
-          "user_id": widget.user.id.toString(),
-          "coins": itemCost.toString(),
-          "status": "pay"
-        },
-      );
-      print(response.body);
-      if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        return jsondata['status'] == 'success';
-      }
+  void deductCoin() async {
+    int currentCoin = int.parse(widget.user.coin!) - 10;
+    
+    if (currentCoin > 0) {
+      http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/update_coin.php"),
+          body: {
+            "user_id": widget.user.id.toString(),
+            "coins": currentCoin.toString(),
+            "status": "pay"
+          }).then((response) {
+        if (response.statusCode == 200) {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == 'success') {
+            insertitem();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Failed to deduct Coins")));
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Failed to deduct Coins")));
+        }
+      });
+    } else {
+      showInsufficientCoinDialog();
     }
-    return false;
   }
 
   void showInsufficientCoinDialog() {
@@ -443,11 +444,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 style: TextStyle(),
               ),
               onPressed: () {
-                Navigator.pushAndRemoveUntil(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => BuyCoinScreen(user: widget.user)),
-                  (route) => false,
                 );
               },
             ),

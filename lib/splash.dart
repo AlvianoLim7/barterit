@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 
 import 'dart:async';
 import 'dart:convert';
@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -93,7 +93,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 builder: (content) => MainScreen(user: user),
               ),
             );
-            return;
+          } else {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.clear();
+            Timer(
+                const Duration(seconds: 3),
+                () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => const LoginScreen())));
           }
         }
       } on TimeoutException catch (_) {

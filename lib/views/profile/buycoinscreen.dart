@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:barterit/models/user.dart';
 import 'package:barterit/myconfig.dart';
-import 'package:barterit/views/mainscreen.dart';
-import 'package:barterit/views/profile/profiletab.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,17 +38,7 @@ class _BuyCoinScreenState extends State<BuyCoinScreen> {
           title: Text(maintitle),
           backgroundColor: Colors.lightGreen,
           foregroundColor: Colors.white,
-          elevation: 5,
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MainScreen(user: widget.user)),
-                  (route) => false,
-                );
-              },
-              icon: const Icon(Icons.arrow_back_rounded))),
+          elevation: 5),
       body: GridView.builder(
         padding: const EdgeInsets.all(16.0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
