@@ -115,7 +115,5 @@ class _SplashScreenState extends State<SplashScreen> {
           () => Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (content) => const LoginScreen())));
     }
-
-    // Redirect to the login screen
   }
 }
