@@ -55,14 +55,20 @@ class _OrderScreenState extends State<OrderScreen> {
                         onPressed: () {
                           confirmBarter(order);
                         },
-                        child: const Text('Confirm'),
+                        child: const Text(
+                          'Confirm',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       ElevatedButton(
                         onPressed: () {
                           rejectBarter(order);
                         },
-                        child: const Text('Reject'),
+                        child: const Text(
+                          'Reject',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   );

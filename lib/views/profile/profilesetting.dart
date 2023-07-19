@@ -70,7 +70,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
               Container(
                 width: screenWidth,
                 alignment: Alignment.center,
-                color: Theme.of(context).colorScheme.background,
+                color: Colors.lightGreen,
                 child: const Padding(
                   padding: EdgeInsets.fromLTRB(0, 2, 0, 2),
                   child: Text(

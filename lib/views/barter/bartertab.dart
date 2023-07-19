@@ -82,9 +82,8 @@ class _BarterTabState extends State<BarterTab> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (content) => OrderScreen(
-                                  user: widget.user
-                                )));
+                            builder: (content) =>
+                                OrderScreen(user: widget.user)));
                   },
                 )
               ],
@@ -99,7 +98,7 @@ class _BarterTabState extends State<BarterTab> {
                 color: Colors.blueGrey,
                 alignment: Alignment.center,
                 child: Text(
-                  "${itemList.length} Items Found",
+                  "$numofresult Items Found",
                   style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),

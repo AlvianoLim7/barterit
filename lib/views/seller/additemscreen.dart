@@ -53,6 +53,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
@@ -245,7 +250,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           onPressed: () {
                             insertDialog();
                           },
-                          child: const Text("Insert item")),
+                          child: const Text(
+                            "Insert item",
+                            style: TextStyle(color: Colors.white),
+                          )),
                     )
                   ],
                 ),
@@ -396,8 +404,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void deductCoin() async {
     int currentCoin = int.parse(widget.user.coin!) - 10;
-    
-    if (currentCoin > 0) {
+
+    if (currentCoin >= 0) {
       http.post(Uri.parse("${MyConfig().SERVER}/barterit/php/update_coin.php"),
           body: {
             "user_id": widget.user.id.toString(),

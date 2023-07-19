@@ -110,7 +110,10 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
               onPressed: () {
                 confirm(); // Assuming this function handles the confirmation process
               },
-              child: const Text("Barter"),
+              child: const Text(
+                "Barter",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],
