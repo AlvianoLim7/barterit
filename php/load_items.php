@@ -18,12 +18,12 @@ $page_first_result = ($pageno - 1) * $results_per_page;
 
 if (isset($_POST['user_id'])){
 	$userid = $_POST['user_id'];	
-	$sqlloaditems = "SELECT * FROM `tbl_items` WHERE user_id = '$userid'";
+	$sqlloaditems = "SELECT * FROM `tbl_items` WHERE user_id = '$userid' AND item_qty > 0";
 }else if (isset($_POST['search'])){
 	$search = $_POST['search'];
-	$sqlloaditems = "SELECT * FROM `tbl_items` WHERE item_name LIKE '%$search%'";
+	$sqlloaditems = "SELECT * FROM `tbl_items` WHERE item_name LIKE '%$search%' AND item_qty > 0";
 }else{
-	$sqlloaditems = "SELECT * FROM `tbl_items`";
+	$sqlloaditems = "SELECT * FROM `tbl_items` WHERE item_qty > 0";
 }
 
 $result = $conn->query($sqlloaditems);
