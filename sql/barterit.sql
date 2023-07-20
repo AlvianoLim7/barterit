@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 20, 2023 at 03:38 AM
+-- Generation Time: Jul 20, 2023 at 03:46 AM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 8.0.7
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `barterit`
 --
+CREATE DATABASE IF NOT EXISTS `barterit` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `barterit`;
 
 -- --------------------------------------------------------
 
